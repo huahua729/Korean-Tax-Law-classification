@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>Classification of Tax Law Question</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet" >
+        <link src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></link>
+        <link src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></link>
+
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.css"/>
+
+        {% load static %}
+        <link href="https://getbootstrap.com/docs/4.3/examples/pricing/pricing.css" rel="stylesheet">
+        <link href="https://getbootstrap.com/docs/4.3/examples/pricing/" rel="canonical" >
+        <link href="https://getbootstrap.com/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <style>
+            .row{
+                margin-left: 15px;
+            }
+            textarea{
+                box-shadow: 5px 5px 5px #F0F0F0 inset;
+            }
+            span{
+                color:#2b669a;
+                font-weight: bolder;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row" style="margin-top: 50px;">
+                본 프로젝트는 <span >법인세</span>, <span>부가가치세</span>,<span>양도소득세</span>, <span>원천징수(연말정산)</span>, <span>종합소득세</span>에 대한 질의를 분류함
+            </div>
+            <div class="row" style="margin-top: 30px;">
+                질의:
+            </div>
+            <div class="row" style="margin-top: 5px;">
+                <textarea id="text1" type="text" style="width:100%;height:200px;" onkeypress="newline()"></textarea>
+            </div>
+            <div class="row" style="float: right;margin-top: 5px;" id="send">
+                <button>제출</button>
+            </div>
+            <div class="row" style="margin-top: 30px;padding-left:-30px;">
+                답안:
+                <div style="margin-left:20px;" id="answer"></div>
+            </div>
+        </div>
+        <script>
+            $("#send").click(function (e) {
+                {#console.log($("#text1").val());#}
+                data = $("#text1").val();
+                if(data.length==0){
+                    alert("질의을 입력하세요");
+                }else{
+                    $.ajax({
+                    type: 'POST'
+                    , data: {'data':data,'csrfmiddlewaretoken': '{{ csrf_token }}'}
+                    , url: 'classification/'
+                    , success: function (data) {
+                        classification = data.class;
+                        if(classification==0){
+                            alert("한글 질의를 입력하세요!!");
+                        }else{
+                            document.getElementById("answer").innerHTML = classification;
+                        }
+                    }, error: function (e) {
+                        alert("classification failed");
+                    }
+                    });
+                }
+
+            });
+            $("#text1").click(function (e) {
+                text = $("#text1").val();
+                console.log("text",text);
+                if(text.length==0){
+                    console.log("12345567568345");
+                    document.getElementById("answer").innerHTML = "";
+                }
+            });
+
+        </script>
+    </body>
+</html>
